@@ -1,0 +1,17 @@
+site_name: Music Player Docs
+
+theme:
+  name: material
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.] # Указываем путь к исходному коду проекта
+
+nav:
+  - Главная: index.md
+  - API Reference:
+      - Linked List: api/linked_list.md
+      - Playlist Manager: api/playlist.md

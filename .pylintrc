@@ -1,0 +1,33 @@
+[MASTER]
+ignore=CVS,.venv,__pycache__
+
+[FORMAT]
+max-line-length=120
+
+[MESSAGES CONTROL]
+disable=
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    too-few-public-methods,
+    duplicate-code,
+    consider-using-f-string,
+    broad-exception-caught,
+    invalid-name,
+    cyclic-import,
+    import-error,
+    no-member,
+    no-name-in-module,
+    protected-access,
+    too-many-instance-attributes,
+    too-many-locals,
+    too-many-statements,
+    too-many-branches,
+    too-many-nested-blocks,
+    too-many-arguments,
+    import-outside-toplevel,
+    unused-import,
+    consider-using-max-builtin,
+    consider-using-min-builtin,
+    redefined-outer-name,
+    line-too-long
