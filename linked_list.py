@@ -1,4 +1,4 @@
-"""Модуль базовых классов двусвязного кольцевого списка."""
+"""Модуль базовых классов двусвязного кольцевого списка и плейлиста."""
 
 from __future__ import annotations
 
@@ -58,7 +58,7 @@ class LinkedList(Generic[T]):
         return self.first_item.previous_item
 
     def _get_node_at(self, index: int) -> LinkedListItem[T]:
-        """Вспомогательный метод получения узла по индексу."""
+        """Возвращает узел по указанному индексу."""
         size = len(self)
         if index < 0:
             index += size
@@ -100,7 +100,7 @@ class LinkedList(Generic[T]):
         new_node.next_item = self.first_item
 
     def append(self, item: T) -> None:
-        """Алиас для append_right."""
+        """Добавляет элемент в конец списка (алиас для append_right)."""
         self.append_right(item)
 
     def remove(self, item: T) -> None:
@@ -133,7 +133,7 @@ class LinkedList(Generic[T]):
                 self.first_item = next_node
 
     def insert(self, previous: LinkedListItem[T], item: T) -> None:
-        """Вставляет узел со значением item справа от узла previous."""
+        """Вставляет элемент справа от узла previous."""
         if self.first_item is None:
             self.append_left(item)
             return
@@ -143,6 +143,23 @@ class LinkedList(Generic[T]):
 
         previous.next_item = new_node
         new_node.next_item = next_node
+
+    def move_track(self, item: T, new_index: int) -> None:
+        """Перемещает элемент внутри списка на позицию new_index."""
+        if item in self:
+            self.remove(item)
+
+        size = len(self)
+        if size == 0 or new_index <= 0:
+            self.append_left(item)
+            return
+
+        if new_index >= size:
+            self.append_right(item)
+            return
+
+        prev_node = self._get_node_at(new_index - 1)
+        self.insert(prev_node, item)
 
     def __len__(self) -> int:
         if self.first_item is None:
@@ -197,7 +214,7 @@ class LinkedList(Generic[T]):
 
 
 class Composition:
-    """Класс музыкальной композиции/трека."""
+    """Базовый класс музыкальной композиции."""
 
     def __init__(
         self,
@@ -215,25 +232,56 @@ class Composition:
         return f"Composition(title={self.title!r}, artist={self.artist!r})"
 
 
-class PlayList(LinkedList):
-    """Класс плейлиста, наследующий двусвязный список."""
+class PlayList(LinkedList[Composition]):
+    """Класс плейлиста, наследующий кольцевой двусвязный список."""
 
     def __init__(
-            self,
-            name: str = "",
-            first_item: LinkedListItem | None = None) -> None:
+        self,
+        name: str = "",
+        first_item: LinkedListItem[Composition] | None = None,
+    ) -> None:
         super().__init__(first_item)
         self.name = name
-        self.current: LinkedListItem | None = first_item
+        self._current_node: LinkedListItem[Composition] | None = first_item
 
-    def play_all(self, track: object | None = None) -> None:
-        """Устанавливает текущий воспроизводимый трек или сбрасывает на первый элемент."""
+    @property
+    def current(self) -> Composition | None:
+        """Возвращает текущую воспроизводимую композицию."""
+        if self._current_node is None:
+            return None
+        return self._current_node.data
+
+    @current.setter
+    def current(
+        self, value: Composition | LinkedListItem[Composition] | None
+    ) -> None:
+        """Устанавливает текущую композицию."""
+        if value is None:
+            self._current_node = None
+        elif isinstance(value, LinkedListItem):
+            self._current_node = value
+        else:
+            curr = self.first_item
+            size = len(self)
+            found = None
+            for _ in range(size):
+                if curr is not None and curr.data == value:
+                    found = curr
+                    break
+                if curr is not None:
+                    curr = curr.next_item
+            self._current_node = found
+
+    def play_all(
+        self, track: Composition | LinkedListItem[Composition] | None = None
+    ) -> None:
+        """Устанавливает активный трек для воспроизведения."""
         if track is None:
-            self.current = self.first_item
+            self._current_node = self.first_item
             return
 
         if isinstance(track, LinkedListItem):
-            self.current = track
+            self._current_node = track
             return
 
         if self.first_item is not None:
@@ -241,52 +289,72 @@ class PlayList(LinkedList):
             size = len(self)
             for _ in range(size):
                 if current_node is not None and (
-                        current_node.data == track or current_node is track):
-                    self.current = current_node
+                    current_node.data == track or current_node is track
+                ):
+                    self._current_node = current_node
                     break
                 if current_node is not None:
                     current_node = current_node.next_item
 
-    def next_track(self) -> object | None:
-        """Сдвигает указатель на следующий трек и возвращает его."""
-        if self.current is None:
-            self.current = self.first_item
+    def next_track(self) -> Composition | None:
+        """Переходит к следующему треку по кольцу и возвращает его."""
+        if self._current_node is None:
+            self._current_node = self.first_item
 
-        if self.current is not None and self.current.next_item is not None:
-            self.current = self.current.next_item
-            return self.current.data
+        if self._current_node is not None and self._current_node.next_item is not None:
+            self._current_node = self._current_node.next_item
+            return self._current_node.data
         return None
 
-    def prev_track(self) -> object | None:
-        """Сдвигает указатель на предыдущий трек и возвращает его."""
-        if self.current is None:
-            self.current = self.first_item
+    def prev_track(self) -> Composition | None:
+        """Переходит к предыдущему треку по кольцу и возвращает его."""
+        if self._current_node is None:
+            self._current_node = self.first_item
 
-        if self.current is not None and self.current.previous_item is not None:
-            self.current = self.current.previous_item
-            return self.current.data
+        if (
+            self._current_node is not None
+            and self._current_node.previous_item is not None
+        ):
+            self._current_node = self._current_node.previous_item
+            return self._current_node.data
         return None
 
-    def previous_track(self) -> object | None:
+    def previous_track(self) -> Composition | None:
         """Алиас для prev_track."""
         return self.prev_track()
 
-    def __iter__(self) -> Iterator:
-        """Итератор по содержимому плейлиста (возвращает сами треки/Composition)."""
+    def remove(self, item: Composition) -> None:
+        """Удаляет трек из плейлиста и обновляет ссылку на текущий трек."""
+        target_node: LinkedListItem[Composition] | None = None
+        if self.first_item is not None:
+            curr = self.first_item
+            for _ in range(len(self)):
+                if curr is not None and curr.data == item:
+                    target_node = curr
+                    break
+                if curr is not None:
+                    curr = curr.next_item
+
+        super().remove(item)
+
+        if self._current_node is target_node:
+            if self.first_item is None:
+                self._current_node = None
+            else:
+                self._current_node = (
+                    target_node.next_item
+                    if target_node is not None
+                    else self.first_item
+                )
+
+    def __iter__(self) -> Iterator[Composition]:
+        """Итератор по объектам Composition (а не по узлам)."""
         if self.first_item is None:
             return
         current = self.first_item
         size = len(self)
         for _ in range(size):
-            if current is None:
+            if current is None or current.data is None:
                 break
             yield current.data
             current = current.next_item
-
-
-__all__ = [
-    "Composition",
-    "LinkedList",
-    "LinkedListItem",
-    "PlayList",
-]
