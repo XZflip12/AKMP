@@ -215,6 +215,24 @@ MODERN_STYLESHEET = f"""
         margin: -5px 0;
         border-radius: 7px;
     }}
+    QMessageBox {{
+        background-color: {GruvboxPalette.bg0};
+    }}
+    QMessageBox QLabel {{
+        color: {GruvboxPalette.fg};
+    }}
+    QMessageBox QPushButton {{
+        background-color: {GruvboxPalette.bg2};
+        color: {GruvboxPalette.fg0};
+        border: 1px solid {GruvboxPalette.bg3};
+        border-radius: 6px;
+        padding: 6px 16px;
+        font-weight: 600;
+        min-width: 70px;
+    }}
+    QMessageBox QPushButton:hover {{
+        background-color: {GruvboxPalette.bg3};
+    }}
 """
 
 
