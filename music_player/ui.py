@@ -233,6 +233,41 @@ MODERN_STYLESHEET = f"""
     QMessageBox QPushButton:hover {{
         background-color: {GruvboxPalette.bg3};
     }}
+    QFileDialog {{
+        background-color: {GruvboxPalette.bg_dim};
+    }}
+    QFileDialog QListView, QFileDialog QTreeView {{
+        background-color: {GruvboxPalette.bg0};
+        border: 1px solid {GruvboxPalette.bg1};
+        color: {GruvboxPalette.fg};
+    }}
+    QFileDialog QListView::item:hover, QFileDialog QTreeView::item:hover {{
+        background-color: {GruvboxPalette.bg1};
+    }}
+    QFileDialog QListView::item:selected, QFileDialog QTreeView::item:selected {{
+        background-color: {GruvboxPalette.bg2};
+        color: {GruvboxPalette.green};
+    }}
+    QFileDialog QLineEdit {{
+        background-color: {GruvboxPalette.bg0};
+        border: 1px solid {GruvboxPalette.bg2};
+        color: {GruvboxPalette.fg0};
+        padding: 4px;
+        border-radius: 4px;
+    }}
+    QFileDialog QComboBox {{
+        background-color: {GruvboxPalette.bg0};
+        border: 1px solid {GruvboxPalette.bg2};
+        color: {GruvboxPalette.fg};
+        padding: 4px;
+        border-radius: 4px;
+    }}
+    QFileDialog QHeaderView::section {{
+        background-color: {GruvboxPalette.bg1};
+        color: {GruvboxPalette.gray};
+        padding: 4px;
+        border: none;
+    }}
 """
 
 
