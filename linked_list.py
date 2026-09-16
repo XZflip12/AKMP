@@ -132,11 +132,24 @@ class LinkedList(Generic[T]):
             if target_node is self.first_item:
                 self.first_item = next_node
 
-    def insert(self, previous: LinkedListItem[T], item: T) -> None:
+    def insert(self, previous: LinkedListItem[T] | T, item: T) -> None:
         """Вставляет элемент справа от узла previous."""
         if self.first_item is None:
             self.append_left(item)
             return
+
+        if not isinstance(previous, LinkedListItem):
+            current = self.first_item
+            size = len(self)
+
+            for _ in range(size):
+                if current is not None and current.data == previous:
+                    previous = current
+                    break
+                if current is not None:
+                    current = current.next_item
+            else:
+                raise ValueError(f"Element {previous!r} is not in the list")
 
         new_node = LinkedListItem(item)
         next_node = previous.next_item
@@ -182,8 +195,8 @@ class LinkedList(Generic[T]):
             yield current
             current = current.next_item
 
-    def __getitem__(self, index: int) -> LinkedListItem[T]:
-        return self._get_node_at(index)
+    def __getitem__(self, index: int) -> T:
+        return self._get_node_at(index).data
 
     def __contains__(self, item: object) -> bool:
         if self.first_item is None:
@@ -197,16 +210,18 @@ class LinkedList(Generic[T]):
                 current = current.next_item
         return False
 
-    def __reversed__(self) -> Iterator[LinkedListItem[T]]:
+    def __reversed__(self) -> Iterator[T]:
         last_node = self.last
         if last_node is None:
             return
+
         current = last_node
         size = len(self)
+
         for _ in range(size):
             if current is None:
                 break
-            yield current
+            yield current.data
             current = current.previous_item
 
     def __repr__(self) -> str:

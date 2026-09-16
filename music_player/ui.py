@@ -152,7 +152,6 @@ MODERN_STYLESHEET = f"""
         font-weight: 600;
     }}
 
-    /* Standard Buttons & Contrasts Fix */
     QPushButton {{
         background-color: {GruvboxPalette.bg2};
         border: none;
