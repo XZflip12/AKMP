@@ -1,5 +1,6 @@
 # pylint: disable=attribute-defined-outside-init, unused-argument, broad-exception-caught, no-else-return
 # pylint: disable=attribute-defined-outside-init, unused-argument, broad-exception-caught
+# pylint: disable=no-name-in-module
 """PyQt-интерфейс музыкального плеера с темой Gruvbox (Modern UI)."""
 
 from __future__ import annotations
@@ -996,9 +997,7 @@ class MusicPlayerUI(QMainWindow):
                 title=os.path.splitext(
                     os.path.basename(file_path))[0],
                 artist="Локальный файл",
-                track_id=f"{
-                    self.selected_playlist_name}:{
-                    os.path.basename(file_path)}",
+                track_id=f"{self.selected_playlist_name}:{os.path.basename(file_path)}",
                 genre="local",
                 file_path=file_path,
             )

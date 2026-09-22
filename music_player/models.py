@@ -37,10 +37,7 @@ class Track(Composition):
         self.file_path = file_path
 
     def __repr__(self) -> str:
-        return f"Track(title={
-            self.title!r}, artist={
-            self.artist!r}, album={
-            self.album!r})"
+        return f"Track(title={self.title!r}, artist={self.artist!r}, album={self.album!r})"
 
 
 @dataclass
