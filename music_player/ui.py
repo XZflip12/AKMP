@@ -175,6 +175,7 @@ MODERN_STYLESHEET = f"""
     /* Icon Buttons */
     QPushButton.IconButton {{
         background: transparent;
+        background-color: #ffffffff;
         border: none;
         border-radius: 6px;
         padding: 0px;
